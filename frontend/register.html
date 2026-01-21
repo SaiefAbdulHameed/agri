@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container auth">
+    <h2>User Registration</h2>
+
+    <input id="fullname" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+
+    <input id="state" placeholder="State">
+    <input id="district" placeholder="District">
+    <input id="village" placeholder="Village">
+
+    <input id="land" type="number" placeholder="Land Size (Acres)">
+
+    <select id="soil_method">
+        <option value="">Soil Data Source</option>
+        <option value="sensor">IoT Sensor</option>
+        <option value="lab">Government Lab</option>
+        <option value="manual">Manual Entry</option>
+    </select>
+
+    <select id="experience">
+        <option value="">Farming Experience</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="expert">Expert</option>
+    </select>
+
+    <select id="role">
+        <option value="farmer">Farmer</option>
+        <option value="admin">Admin / Authority</option>
+    </select>
+
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="register()">Register</button>
+    <p id="msg"></p>
+</div>
+
+<script src="auth.js"></script>
+</body>
+</html>
