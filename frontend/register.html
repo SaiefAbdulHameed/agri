@@ -1,48 +1,1022 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Register</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart | Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-green: #1e3a2f;
+            --light-green: #2d5a3d;
+            --accent-green: #10b981;
+            --pale-green: #d1fae5;
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --text-dark: #1f2937;
+            --text-light: #6b7280;
+            --error: #ef4444;
+            --success: #22c55e;
+            --info-blue: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            overflow: hidden;
+            background: #000;
+        }
+
+        /* Animated Background */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(30, 58, 47, 0.8), rgba(15, 23, 42, 0.9)),
+                        url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            animation: kenBurns 20s ease-in-out infinite alternate;
+        }
+
+        @keyframes kenBurns {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.1); }
+        }
+
+        .floating-leaves {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .leaf {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 20px;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        .leaf:nth-child(1) { left: 10%; animation-delay: 0s; top: 100%; }
+        .leaf:nth-child(2) { left: 20%; animation-delay: 2s; top: 100%; font-size: 30px; }
+        .leaf:nth-child(3) { left: 35%; animation-delay: 4s; top: 100%; }
+        .leaf:nth-child(4) { left: 50%; animation-delay: 1s; top: 100%; font-size: 25px; }
+        .leaf:nth-child(5) { left: 65%; animation-delay: 3s; top: 100%; }
+        .leaf:nth-child(6) { left: 80%; animation-delay: 5s; top: 100%; font-size: 35px; }
+        .leaf:nth-child(7) { left: 90%; animation-delay: 2.5s; top: 100%; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+
+        /* Split Layout */
+        .split-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Left Side - Branding */
+        .brand-side {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            color: white;
+            position: relative;
+            z-index: 1;
+        }
+
+        .brand-content {
+            max-width: 500px;
+            animation: fadeInUp 1s ease;
+        }
+
+        .logo-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--accent-green), #059669);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3); }
+            50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(16, 185, 129, 0.4); }
+        }
+
+        .brand-title {
+            font-size: 42px;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .brand-subtitle {
+            font-size: 18px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .hero-text {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #ffffff 0%, var(--accent-green) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-description {
+            font-size: 18px;
+            line-height: 1.8;
+            opacity: 0.85;
+            margin-bottom: 40px;
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Right Side - Form */
+        .form-side {
+            flex: 0 0 520px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+            position: relative;
+            z-index: 1;
+            overflow-y: auto;
+        }
+
+        .register-container {
+            width: 100%;
+            max-width: 460px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideIn 0.8s ease;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .form-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+        }
+
+        .form-header p {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .input-group {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .input-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            font-size: 16px;
+            transition: all 0.3s;
+            z-index: 2;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 14px 12px 42px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.3s;
+            background: #f9fafb;
+            color: var(--text-dark);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-green);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        input:focus ~ .input-icon,
+        select:focus ~ .input-icon {
+            color: var(--accent-green);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%236b7280' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 40px;
+        }
+
+        select:invalid, 
+        select option:first-child {
+            color: var(--text-light);
+        }
+
+        option {
+            color: var(--text-dark);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: var(--text-dark);
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--accent-green) 0%, #059669 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #msg {
+            margin-top: 16px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            text-align: center;
+            display: none;
+        }
+
+        #msg:not(:empty) {
+            display: block;
+        }
+
+        #msg.error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #fecaca;
+        }
+
+        #msg.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #a7f3d0;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .login-link a {
+            color: var(--accent-green);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 4px;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            display: flex;
+            gap: 16px;
+            margin-top: 8px;
+        }
+
+        .role-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .role-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .role-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f9fafb;
+        }
+
+        .role-label i {
+            font-size: 24px;
+            color: var(--text-light);
+            transition: all 0.3s;
+        }
+
+        .role-label span {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .role-option input[type="radio"]:checked + .role-label {
+            border-color: var(--accent-green);
+            background: var(--pale-green);
+        }
+
+        .role-option input[type="radio"]:checked + .role-label i {
+            color: var(--accent-green);
+        }
+
+        /* Dynamic Fields */
+        .dynamic-field {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .dynamic-field.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Employee specific styling */
+        .employee-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        /* Validation styles */
+        input:invalid:not(:placeholder-shown) {
+            border-color: var(--error);
+        }
+
+        input:valid:not(:placeholder-shown) {
+            border-color: var(--success);
+        }
+
+        .validation-hint {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+            display: none;
+        }
+
+        input:focus:invalid ~ .validation-hint {
+            display: block;
+            color: var(--error);
+        }
+
+        /* Custom scrollbar for form container */
+        .register-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .register-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .register-container::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        .register-container::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .brand-side {
+                display: none;
+            }
+            
+            .form-side {
+                flex: 1;
+                background: linear-gradient(135deg, rgba(30, 58, 47, 0.9), rgba(15, 23, 42, 0.95));
+            }
+            
+            .register-container {
+                background: rgba(255, 255, 255, 0.98);
+                max-height: 95vh;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-side {
+                padding: 16px;
+            }
+            
+            .register-container {
+                padding: 28px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .role-selection {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 <body>
 
-<div class="container auth">
-    <h2>User Registration</h2>
+    <!-- Background -->
+    <div class="bg-container">
+        <div class="bg-image"></div>
+        <div class="floating-leaves">
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+            <i class="fas fa-leaf leaf"></i>
+        </div>
+    </div>
 
-    <input id="fullname" placeholder="Full Name">
-    <input id="email" placeholder="Email">
+    <div class="split-container">
+        <!-- Left Side - Branding -->
+        <div class="brand-side">
+            <div class="brand-content">
+                <div class="logo-main">
+                    <div class="logo-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div>
+                        <div class="brand-title">AgriSmart</div>
+                        <div class="brand-subtitle">Intelligent Farming Solutions</div>
+                    </div>
+                </div>
+                
+                <h1 class="hero-text">Join Our Farming Community</h1>
+                <p class="hero-description">
+                    Create your account to access personalized crop recommendations, 
+                    soil analysis tools, and AI-powered farming insights.
+                </p>
+                
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <span>Free Registration</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <span>Secure Data Storage</span>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-id-card"></i>
+                        </div>
+                        <span>Unique Farmer/Employee ID</span>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <input id="state" placeholder="State">
-    <input id="district" placeholder="District">
-    <input id="village" placeholder="Village">
+        <!-- Right Side - Registration Form -->
+        <div class="form-side">
+            <div class="register-container">
+                <div class="form-header">
+                    <h2>Create Account</h2>
+                    <p>Fill in your details to get started</p>
+                </div>
 
-    <input id="land" type="number" placeholder="Land Size (Acres)">
+                <div class="form-grid">
+                    <!-- Full Name -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-user input-icon"></i>
+                            <input type="text" id="fullname" placeholder="Full Name" required minlength="3">
+                        </div>
+                    </div>
 
-    <select id="soil_method">
-        <option value="">Soil Data Source</option>
-        <option value="sensor">IoT Sensor</option>
-        <option value="lab">Government Lab</option>
-        <option value="manual">Manual Entry</option>
-    </select>
+                    <!-- Email -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-envelope input-icon"></i>
+                            <input type="email" id="email" placeholder="Email Address" required>
+                        </div>
+                    </div>
 
-    <select id="experience">
-        <option value="">Farming Experience</option>
-        <option value="beginner">Beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="expert">Expert</option>
-    </select>
+                    <!-- Phone - Indian number only -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-phone input-icon"></i>
+                            <input type="tel" id="phone" placeholder="Phone Number (10 digits)" 
+                                   pattern="[6-9][0-9]{9}" maxlength="10" required>
+                        </div>
+                        <div class="validation-hint">Enter valid 10-digit Indian mobile number</div>
+                    </div>
 
-    <select id="role">
-        <option value="farmer">Farmer</option>
-        <option value="admin">Admin / Authority</option>
-    </select>
+                    <!-- State & District -->
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <i class="fas fa-map-marker-alt input-icon"></i>
+                            <input type="text" id="state" placeholder="State" required>
+                        </div>
+                    </div>
 
-    <input id="password" type="password" placeholder="Password">
+                    <div class="input-group">
+                        <div class="input-wrapper">
+                            <i class="fas fa-city input-icon"></i>
+                            <input type="text" id="district" placeholder="District" required>
+                        </div>
+                    </div>
 
-    <button onclick="register()">Register</button>
-    <p id="msg"></p>
-</div>
+                    <!-- Village -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-home input-icon"></i>
+                            <input type="text" id="village" placeholder="Village" required>
+                        </div>
+                    </div>
 
-<script src="auth.js"></script>
+                    <!-- Role Selection -->
+                    <div class="input-group full-width">
+                        <label style="font-size:14px; color:#374151; margin-bottom:8px; display:block; font-weight:600;">
+                            Register As
+                        </label>
+                        <div class="role-selection">
+                            <div class="role-option">
+                                <input type="radio" name="role" id="role-farmer" value="farmer" checked onchange="toggleRoleFields()">
+                                <label for="role-farmer" class="role-label">
+                                    <i class="fas fa-tractor"></i>
+                                    <span>Farmer</span>
+                                </label>
+                            </div>
+                            <div class="role-option">
+                                <input type="radio" name="role" id="role-employee" value="employee" onchange="toggleRoleFields()">
+                                <label for="role-employee" class="role-label">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Employee</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Farmer Fields: Land Size & Experience -->
+                    <div class="input-group" id="farmer-land">
+                        <div class="input-wrapper">
+                            <i class="fas fa-ruler-combined input-icon"></i>
+                            <input type="number" id="land" placeholder="Land Size (Acres)" step="0.1" min="0.1" required>
+                        </div>
+                    </div>
+
+                    <div class="input-group" id="farmer-experience">
+                        <div class="input-wrapper">
+                            <i class="fas fa-seedling input-icon"></i>
+                            <select id="experience" required>
+                                <option value="" disabled selected>Experience</option>
+                                <option value="beginner">Beginner (0-2 years)</option>
+                                <option value="intermediate">Intermediate (3-7 years)</option>
+                                <option value="expert">Expert (8+ years)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Employee Fields: Department & Expertise (Hidden by default) -->
+                    <div class="input-group full-width dynamic-field" id="employee-department">
+                        <div class="input-wrapper">
+                            <i class="fas fa-building input-icon"></i>
+                            <select id="department">
+                                <option value="" disabled selected>Select Department</option>
+                                <option value="Agricultural Sciences">Agricultural Sciences</option>
+                                <option value="Crop Management">Crop Management</option>
+                                <option value="Soil Science">Soil Science</option>
+                                <option value="Pest Control">Pest Control</option>
+                                <option value="Research & Development">Research & Development</option>
+                                <option value="Extension Services">Extension Services</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="input-group full-width dynamic-field" id="employee-expertise">
+                        <div class="input-wrapper">
+                            <i class="fas fa-brain input-icon"></i>
+                            <input type="text" id="expertise" placeholder="Area of Expertise (e.g., Organic Farming, Precision Agriculture)">
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="password" placeholder="Create Password" 
+                                   required minlength="8" pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}">
+                            <i class="fas fa-eye password-toggle" onclick="togglePassword('password')"></i>
+                        </div>
+                        <div class="validation-hint">Min 8 chars with uppercase, lowercase & number</div>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="input-group full-width">
+                        <div class="input-wrapper">
+                            <i class="fas fa-lock input-icon"></i>
+                            <input type="password" id="confirm_password" placeholder="Confirm Password" required>
+                            <i class="fas fa-eye password-toggle" onclick="togglePassword('confirm_password')"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <button onclick="register()" id="register-btn">
+                    <span>Create Account</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+
+                <p id="msg"></p>
+
+                <div class="login-link">
+                    Already have an account?<a href="login.html">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API = "http://localhost:8080";
+
+        // Toggle password visibility
+        function togglePassword(fieldId) {
+            const input = document.getElementById(fieldId);
+            const icon = event.target;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // Show/hide fields based on role selection
+        function toggleRoleFields() {
+            const isFarmer = document.getElementById('role-farmer').checked;
+            const farmerLand = document.getElementById('farmer-land');
+            const farmerExp = document.getElementById('farmer-experience');
+            const empDept = document.getElementById('employee-department');
+            const empExpertise = document.getElementById('employee-expertise');
+            
+            const landInput = document.getElementById('land');
+            const expSelect = document.getElementById('experience');
+            const deptSelect = document.getElementById('department');
+            const expertiseInput = document.getElementById('expertise');
+            
+            if (isFarmer) {
+                // Show farmer fields
+                farmerLand.style.display = 'block';
+                farmerExp.style.display = 'block';
+                landInput.required = true;
+                expSelect.required = true;
+                
+                // Hide employee fields
+                empDept.classList.remove('visible');
+                empExpertise.classList.remove('visible');
+                deptSelect.required = false;
+                expertiseInput.required = false;
+                
+                // Clear employee values
+                deptSelect.value = '';
+                expertiseInput.value = '';
+            } else {
+                // Hide farmer fields
+                farmerLand.style.display = 'none';
+                farmerExp.style.display = 'none';
+                landInput.required = false;
+                expSelect.required = false;
+                
+                // Show employee fields
+                empDept.classList.add('visible');
+                empExpertise.classList.add('visible');
+                deptSelect.required = true;
+                expertiseInput.required = true;
+                
+                // Clear farmer values
+                landInput.value = '';
+                expSelect.value = '';
+            }
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', toggleRoleFields);
+
+        // Phone number validation - only digits, max 10
+        document.getElementById('phone').addEventListener('input', function(e) {
+            this.value = this.value.replace(/\D/g, '');
+            
+            if (this.value.length > 0 && !/[6-9]/.test(this.value[0])) {
+                this.value = '';
+                showMessage('Phone number must start with 6, 7, 8, or 9', 'error');
+            }
+        });
+
+        // Password match validation
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const pwd = document.getElementById('password').value;
+            if (this.value !== pwd) {
+                this.style.borderColor = 'var(--error)';
+            } else {
+                this.style.borderColor = 'var(--success)';
+            }
+        });
+
+        // Helper to show messages
+        function showMessage(text, type) {
+            const msg = document.getElementById('msg');
+            msg.textContent = text;
+            msg.className = type;
+            setTimeout(() => {
+                msg.textContent = '';
+                msg.className = '';
+            }, 3000);
+        }
+
+        // Main register function
+        async function register() {
+            // Get all values
+            const fullname = document.getElementById("fullname").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phone = document.getElementById("phone").value.trim();
+            const password = document.getElementById("password").value;
+            const confirmPassword = document.getElementById("confirm_password").value;
+            const state = document.getElementById("state").value.trim();
+            const district = document.getElementById("district").value.trim();
+            const village = document.getElementById("village").value.trim();
+            
+            const roleEl = document.querySelector('input[name="role"]:checked');
+            const role = roleEl ? roleEl.value : "farmer";
+            
+            // Role-specific fields
+            let land_size = 0;
+            let experience = "";
+            let department = "";
+            let expertise = "";
+            
+            if (role === "farmer") {
+                land_size = parseFloat(document.getElementById("land").value) || 0;
+                experience = document.getElementById("experience").value;
+            } else {
+                department = document.getElementById("department").value;
+                expertise = document.getElementById("expertise").value.trim();
+            }
+
+            // Validation
+            if (!fullname || !email || !phone || !password || !confirmPassword || !state || !district || !village) {
+                showMessage("All fields are required", "error");
+                return;
+            }
+
+            if (!/^[6-9][0-9]{9}$/.test(phone)) {
+                showMessage("Please enter valid 10-digit Indian phone number", "error");
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showMessage("Passwords do not match", "error");
+                return;
+            }
+
+            if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}/.test(password)) {
+                showMessage("Password must contain uppercase, lowercase and number", "error");
+                return;
+            }
+
+            if (role === "farmer") {
+                if (land_size <= 0) {
+                    showMessage("Please enter valid land size", "error");
+                    return;
+                }
+                if (!experience) {
+                    showMessage("Please select farming experience", "error");
+                    return;
+                }
+            } else {
+                if (!department) {
+                    showMessage("Please select department", "error");
+                    return;
+                }
+                if (!expertise) {
+                    showMessage("Please enter area of expertise", "error");
+                    return;
+                }
+            }
+
+            // Build payload
+            const payload = {
+                fullname,
+                email,
+                phone,
+                password,
+                state,
+                district,
+                village,
+                land_size,
+                experience,
+                role,
+                department,
+                expertise
+            };
+
+            // Show loading
+            const btn = document.getElementById('register-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating...';
+
+            try {
+                const response = await fetch(API + "/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (!data.success) {
+                    showMessage(data.message || "Registration failed", "error");
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Create Account</span><i class="fas fa-arrow-right"></i>';
+                    return;
+                }
+
+                showMessage("Registration submitted! Please wait for admin approval.", "success");
+                
+                // Show ID preview based on role
+                setTimeout(() => {
+                    const idType = role === "farmer" ? "Farmer ID" : "Employee ID";
+                    showMessage(`Your ${idType} will be generated upon approval`, "success");
+                }, 1500);
+
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 3000);
+
+            } catch (err) {
+                console.error(err);
+                showMessage("Server error. Please try again.", "error");
+                btn.disabled = false;
+                btn.innerHTML = '<span>Create Account</span><i class="fas fa-arrow-right"></i>';
+            }
+        }
+    </script>
+    
 </body>
 </html>

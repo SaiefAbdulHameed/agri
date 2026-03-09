@@ -1,37 +1,1331 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Panel</title>
-    <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart Admin | Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #10b981;
+            --primary-dark: #059669;
+            --primary-light: #d1fae5;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --sidebar-width: 260px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--gray-50);
+            color: var(--gray-800);
+            min-height: 100vh;
+        }
+
+        .login-overlay {
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--gray-800) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .login-box {
+            background: white;
+            padding: 48px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .login-logo i {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 16px;
+        }
+
+        .login-logo h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-700);
+            margin-bottom: 6px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .error-msg {
+            color: var(--danger);
+            font-size: 14px;
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .app-container {
+            display: none;
+        }
+
+        .app-container.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            height: 100vh;
+            position: fixed;
+            border-right: 1px solid var(--gray-200);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand i {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 16px 12px;
+            overflow-y: auto;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--gray-600);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .nav-item.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .nav-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .badge {
+            margin-left: auto;
+            background: var(--danger);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid var(--gray-200);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .user-info:hover {
+            background: var(--gray-100);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--gray-500);
+        }
+
+        .main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 20px 32px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .page-title h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .page-title p {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            background: white;
+            color: var(--gray-600);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: var(--gray-100);
+            color: var(--gray-800);
+        }
+
+        .content {
+            padding: 32px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .stat-icon.blue { background: #dbeafe; color: var(--info); }
+        .stat-icon.green { background: var(--primary-light); color: var(--primary); }
+        .stat-icon.orange { background: #fef3c7; color: var(--warning); }
+        .stat-icon.red { background: #fee2e2; color: var(--danger); }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--gray-800);
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--gray-500);
+            margin-top: 4px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid var(--gray-200);
+            margin-bottom: 24px;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-500);
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--gray-200);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: var(--gray-50);
+        }
+
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar-sm {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray-600);
+            font-size: 14px;
+        }
+
+        .user-info-text {
+            line-height: 1.4;
+        }
+
+        .user-name-text {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .user-email-text {
+            font-size: 13px;
+            color: var(--gray-500);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-badge::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+        }
+
+        .status-badge.pending {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status-badge.pending::before { background: var(--warning); }
+
+        .status-badge.active {
+            background: var(--primary-light);
+            color: var(--primary-dark);
+        }
+
+        .status-badge.active::before { background: var(--primary); }
+
+        .status-badge.disabled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-badge.disabled::before { background: var(--danger); }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .btn-success {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #d97706;
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--gray-500);
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--gray-300);
+        }
+
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
 </head>
 <body>
+    <!-- Logout Confirmation Modal -->
+    <div id="logoutModal" style="
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+    ">
+        <div style="
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        ">
+            <i class="fas fa-sign-out-alt" style="font-size: 48px; color: #ef4444; margin-bottom: 16px;"></i>
+            <h3 style="margin-bottom: 8px; color: #1f2937;">Confirm Logout</h3>
+            <p style="color: #6b7280; margin-bottom: 24px;">Are you sure you want to logout from AgriSmart Admin?</p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button onclick="closeLogoutModal()" style="
+                    padding: 12px 24px;
+                    border: 1px solid #d1d5db;
+                    background: white;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 500;
+                ">Cancel</button>
+                <button onclick="confirmLogout()" style="
+                    padding: 12px 24px;
+                    border: none;
+                    background: #ef4444;
+                    color: white;
+                    border-radius: 8px;
+                    cursor: pointer;
+                    font-weight: 500;
+                ">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
 
-<script>
-    const user = JSON.parse(localStorage.getItem("user"));
-    if (!user || user.role !== "admin") {
-        window.location.href = "login.html";
-    }
-</script>
+    <!-- Login Overlay -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-seedling"></i>
+                <h2>AgriSmart Admin</h2>
+            </div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="loginEmail" placeholder="admin@agrismart.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" required>
+                </div>
+                <button type="submit" class="btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Sign In
+                </button>
+                <div class="error-msg" id="loginError"></div>
+            </form>
+        </div>
+    </div>
 
-<div class="container">
-    <h2>Admin Panel</h2>
-    <p>System monitoring & data control</p>
+    <!-- Main App -->
+    <div class="app-container" id="appContainer">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">
+                    <i class="fas fa-seedling"></i>
+                    <h1>AgriSmart</h1>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <div class="nav-item active" onclick="showSection('dashboard', this)">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </div>
+                <div class="nav-item" onclick="showSection('pending', this)">
+                    <i class="fas fa-user-clock"></i>
+                    <span>Pending Approval</span>
+                    <span class="badge" id="pendingBadge">0</span>
+                </div>
+                <div class="nav-item" onclick="showSection('users', this)">
+                    <i class="fas fa-users"></i>
+                    <span>All Users</span>
+                </div>
+                <div class="nav-item" onclick="showSection('ml', this)">
+                    <i class="fas fa-brain"></i>
+                    <span>Teach ML</span>
+                </div>
+                <div class="nav-item" onclick="showSection('settings', this)">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </div>
+            </nav>
 
-    <ul>
-        <li>View farmers</li>
-        <li>Manage soil data</li>
-        <li>Monitor ML accuracy</li>
-    </ul>
+            <div class="sidebar-footer">
+                <div class="user-info" onclick="logout()">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <div class="user-name" id="sidebarName">Admin</div>
+                        <div class="user-role" id="sidebarRole">Super Admin</div>
+                    </div>
+                    <i class="fas fa-sign-out-alt" style="color: var(--gray-400);"></i>
+                </div>
+            </div>
+        </aside>
 
-    <button onclick="logout()">Logout</button>
-</div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <div class="page-title">
+                    <h2 id="pageTitle">Dashboard</h2>
+                    <p id="pageSubtitle">Overview of your agricultural platform</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="refreshData()">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="btn-icon">
+                        <i class="fas fa-bell"></i>
+                    </button>
+                </div>
+            </header>
 
-<script>
-function logout() {
-    localStorage.clear();
-    window.location.href = "login.html";
-}
-</script>
+            <!-- Content -->
+            <div class="content">
+                <!-- Dashboard Section -->
+                <div id="dashboardSection">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon blue">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statTotal">0</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon green">
+                                    <i class="fas fa-user-check"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statActive">0</div>
+                            <div class="stat-label">Active Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon orange">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statPending">0</div>
+                            <div class="stat-label">Pending Approval</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon red">
+                                    <i class="fas fa-ban"></i>
+                                </div>
+                            </div>
+                            <div class="stat-value" id="statDisabled">0</div>
+                            <div class="stat-label">Disabled</div>
+                        </div>
+                    </div>
 
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Platform Activity</h3>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="activityChart" height="100"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Approval Section -->
+                <div id="pendingSection" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Pending User Approvals</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="pendingTable">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Contact</th>
+                                            <th>Location</th>
+                                            <th>Details</th>
+                                            <th>Registered</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="pendingTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="empty-state hidden" id="pendingEmpty">
+                                <i class="fas fa-check-circle"></i>
+                                <h3>No pending approvals</h3>
+                                <p>All user registrations have been reviewed</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- All Users Section -->
+                <div id="usersSection" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">All Registered Users</h3>
+                            <div class="btn-group">
+                                <button class="btn btn-secondary btn-sm" onclick="filterUsers('all')">All</button>
+                                <button class="btn btn-secondary btn-sm" onclick="filterUsers('active')">Active</button>
+                                <button class="btn btn-secondary btn-sm" onclick="filterUsers('disabled')">Disabled</button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table id="usersTable">
+                                    <thead>
+                                        <tr>
+                                            <th>User</th>
+                                            <th>Location</th>
+                                            <th>Role Details</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTableBody">
+                                        <!-- Dynamic content -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ML Section -->
+                <div id="mlSection" class="hidden">
+                    <div class="stats-grid" style="grid-template-columns: repeat(3, 1fr);">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon blue"><i class="fas fa-database"></i></div>
+                            </div>
+                            <div class="stat-value" id="mlPending">0</div>
+                            <div class="stat-label">Pending Samples</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                            </div>
+                            <div class="stat-value" id="mlProcessed">0</div>
+                            <div class="stat-label">Processed</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <div class="stat-icon orange"><i class="fas fa-robot"></i></div>
+                            </div>
+                            <div class="stat-value" id="mlBuffer">0</div>
+                            <div class="stat-label">Buffer Size</div>
+                        </div>
+                    </div>
+                
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Add Training Data (Crop Recommendation)</h3>
+                        </div>
+                        <div class="card-body">
+                            <p>ML Training form content here...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settingsSection" class="hidden">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">System Settings</h3>
+                        </div>
+                        <div class="card-body">
+                            <p style="color: var(--gray-500);">Settings configuration coming soon...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const API = 'http://localhost:8080';
+        let currentAdmin = null;
+        let allUsers = [];
+        let activityChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        function checkAuth() {
+            const saved = localStorage.getItem('agriAdmin');
+            if (saved) {
+                currentAdmin = JSON.parse(saved);
+                showApp();
+            }
+        }
+
+        document.getElementById('loginForm')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            try {
+                const res = await fetch(`${API}/admin/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    currentAdmin = data;
+                    localStorage.setItem('agriAdmin', JSON.stringify(data));
+                    showApp();
+                } else {
+                    document.getElementById('loginError').textContent = 'Invalid credentials';
+                }
+            } catch (err) {
+                document.getElementById('loginError').textContent = 'Connection failed';
+            }
+        });
+
+        function showApp() {
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('appContainer').classList.add('active');
+            document.getElementById('sidebarName').textContent = currentAdmin.email.split('@')[0];
+            document.getElementById('sidebarRole').textContent = currentAdmin.role_name;
+            
+            loadDashboard();
+            loadPending();
+            loadAllUsers();
+        }
+
+        function logout() {
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            localStorage.removeItem('agriAdmin');
+            location.reload();
+        }
+
+        function showSection(section, clickedElement) {
+            if (!clickedElement && event) {
+                clickedElement = event.currentTarget;
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+            if (clickedElement) clickedElement.classList.add('active');
+            
+            ['dashboard', 'pending', 'users', 'ml', 'settings'].forEach(s => {
+                const el = document.getElementById(s + 'Section');
+                if (el) el.classList.add('hidden');
+            });
+            
+            const targetSection = document.getElementById(section + 'Section');
+            if (targetSection) targetSection.classList.remove('hidden');
+            
+            const titles = {
+                dashboard: ['Dashboard', 'Platform overview and analytics'],
+                pending: ['Pending Approvals', 'Review and approve new user registrations'],
+                users: ['User Management', 'Manage all registered users'],
+                ml: ['Teach ML', 'Add training data to improve AI models'],
+                settings: ['Settings', 'System configuration']
+            };
+            
+            const [title, subtitle] = titles[section] || ['Dashboard', ''];
+            document.getElementById('pageTitle').textContent = title;
+            document.getElementById('pageSubtitle').textContent = subtitle;
+        }
+
+        async function loadDashboard() {
+            try {
+                const res = await fetch(`${API}/admin/dashboard`);
+                const data = await res.json();
+                
+                document.getElementById('statTotal').textContent = data.total_users || 0;
+                document.getElementById('statActive').textContent = data.active_users || 0;
+                document.getElementById('statPending').textContent = data.pending_users || 0;
+                document.getElementById('statDisabled').textContent = data.disabled_users || 0;
+                
+                const badge = document.getElementById('pendingBadge');
+                if (badge) {
+                    badge.textContent = data.pending_users || 0;
+                    badge.style.display = data.pending_users > 0 ? 'inline-block' : 'none';
+                }
+                
+                initChart(data);
+            } catch (err) {
+                console.error('Dashboard load failed:', err);
+            }
+        }
+
+        function initChart(data) {
+            const ctx = document.getElementById('activityChart');
+            if (!ctx) return;
+            
+            const chartData = {
+                labels: ['Total', 'Active', 'Pending', 'Disabled'],
+                datasets: [{
+                    label: 'Users',
+                    data: [
+                        data.total_users || 0, 
+                        data.active_users || 0, 
+                        data.pending_users || 0, 
+                        data.disabled_users || 0
+                    ],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444'],
+                    borderRadius: 6
+                }]
+            };
+            
+            if (activityChart) {
+                activityChart.data = chartData;
+                activityChart.update();
+            } else {
+                activityChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: chartData,
+                    options: {
+                        responsive: true,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { beginAtZero: true, grid: { color: '#e5e7eb' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
+                });
+            }
+        }
+
+        async function loadPending() {
+            try {
+                const res = await fetch(`${API}/admin/pending-users`);
+                const users = await res.json();
+                
+                const tbody = document.getElementById('pendingTableBody');
+                const empty = document.getElementById('pendingEmpty');
+                
+                if (!tbody) return;
+                
+                if (users.length === 0) {
+                    tbody.innerHTML = '';
+                    if (empty) empty.classList.remove('hidden');
+                    return;
+                }
+                
+                if (empty) empty.classList.add('hidden');
+                
+                tbody.innerHTML = users.map(u => {
+                    let detailsHtml = '';
+                    let idBadge = '';
+                    
+                    if (u.role === 'farmer') {
+                        detailsHtml = `
+                            <div style="margin-top: 4px; font-size: 12px; color: #6b7280;">
+                                <i class="fas fa-seedling" style="color: #10b981;"></i>
+                                <strong>Experience:</strong> ${u.experience || 'Not specified'}<br>
+                                <strong>Land:</strong> ${u.land_size || 0} acres
+                            </div>
+                        `;
+                        idBadge = u.farmer_id ? `<span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px;">${u.farmer_id}</span>` : '';
+                    } else if (u.role === 'employee') {
+                        detailsHtml = `
+                            <div style="margin-top: 4px; font-size: 12px; color: #6b7280;">
+                                <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
+                                <strong>Dept:</strong> ${u.department || 'Not specified'}<br>
+                                <strong>Expertise:</strong> ${u.expertise || 'Not specified'}
+                            </div>
+                        `;
+                        idBadge = u.employee_id ? `<span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px;">${u.employee_id}</span>` : '';
+                    }
+                    
+                    return `
+                    <tr>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar-sm"><i class="fas fa-user"></i></div>
+                                <div class="user-info-text">
+                                    <div class="user-name-text">${escapeHtml(u.fullname || 'Unknown')}${idBadge}</div>
+                                    <div class="user-email-text">${escapeHtml(u.email)}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${escapeHtml(u.phone || '-')}</td>
+                        <td>${escapeHtml(u.village || '-')}, ${escapeHtml(u.district || '-')}</td>
+                        <td>
+                            <span class="status-badge pending">${u.role || 'farmer'}</span>
+                            ${detailsHtml}
+                        </td>
+                        <td>${u.created_at ? new Date(u.created_at).toLocaleDateString() : '-'}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button class="btn btn-success btn-sm" onclick="approveUser(${u.id})">
+                                    <i class="fas fa-check"></i> Approve
+                                </button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectUser(${u.id})">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `}).join('');
+            } catch (err) {
+                console.error('Pending load failed:', err);
+            }
+        }
+
+        async function approveUser(id) {
+            try {
+                const res = await fetch(`${API}/admin/approve`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                if (res.ok) {
+                    loadPending();
+                    loadDashboard();
+                    loadAllUsers();
+                } else {
+                    alert('Failed to approve user');
+                }
+            } catch (err) {
+                alert('Failed to approve user');
+            }
+        }
+
+        async function rejectUser(id) {
+            if (!confirm('Reject and delete this user?')) return;
+            try {
+                const res = await fetch(`${API}/admin/reject`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                if (res.ok) {
+                    loadPending();
+                    loadDashboard();
+                } else {
+                    alert('Failed to reject user');
+                }
+            } catch (err) {
+                alert('Failed to reject user');
+            }
+        }
+
+        async function loadAllUsers() {
+            try {
+                const res = await fetch(`${API}/admin/users`);
+                allUsers = await res.json();
+                renderUsers(allUsers);
+            } catch (err) {
+                console.error('Users load failed:', err);
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.getElementById('usersTableBody');
+            if (!tbody) return;
+            
+            tbody.innerHTML = users.map(u => {
+                let roleDetails = '';
+                let idBadge = '';
+                
+                if (u.role === 'farmer') {
+                    roleDetails = `
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+                            <i class="fas fa-seedling" style="color: #10b981;"></i>
+                            ${u.experience || 'No experience'} · ${u.land_size || 0} acres
+                        </div>
+                    `;
+                    idBadge = u.farmer_id ? `<span style="background: #d1fae5; color: #065f46; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${u.farmer_id}</span>` : '';
+                } else if (u.role === 'employee') {
+                    roleDetails = `
+                        <div style="font-size: 12px; color: #6b7280; margin-top: 4px;">
+                            <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
+                            ${u.department || 'General'} · ${u.expertise || 'Agriculture'}
+                        </div>
+                    `;
+                    idBadge = u.employee_id ? `<span style="background: #dbeafe; color: #1e40af; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${u.employee_id}</span>` : '';
+                }
+                
+                return `
+                <tr>
+                    <td>
+                        <div class="user-cell">
+                            <div class="user-avatar-sm"><i class="fas fa-user"></i></div>
+                            <div class="user-info-text">
+                                <div style="display: flex; align-items: center; gap: 8px;">
+                                    <span class="user-name-text">${escapeHtml(u.fullname || 'Unknown')}</span>
+                                    ${idBadge}
+                                </div>
+                                <div class="user-email-text">${escapeHtml(u.email)}</div>
+                                ${roleDetails}
+                            </div>
+                        </div>
+                    </td>
+                    <td>${escapeHtml(u.district || '-')}, ${escapeHtml(u.state || '-')}</td>
+                    <td>${u.role === 'farmer' ? (u.experience || '-') : (u.department || '-')}</td>
+                    <td><span class="status-badge ${u.status || 'pending'}">${u.status || 'pending'}</span></td>
+                    <td>
+                        <div class="btn-group">
+                            ${u.status === 'active' ? 
+                                `<button class="btn btn-warning btn-sm" onclick="disableUser(${u.id})">
+                                    <i class="fas fa-ban"></i> Disable
+                                </button>` :
+                                `<button class="btn btn-success btn-sm" onclick="enableUser(${u.id})">
+                                    <i class="fas fa-check"></i> Enable
+                                </button>`
+                            }
+                            <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        function filterUsers(status) {
+            if (status === 'all') {
+                renderUsers(allUsers);
+            } else {
+                renderUsers(allUsers.filter(u => u.status === status));
+            }
+        }
+
+        async function disableUser(id) {
+            try {
+                const res = await fetch(`${API}/admin/disable`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                if (res.ok) {
+                    loadAllUsers();
+                    loadDashboard();
+                } else {
+                    alert('Failed to disable user');
+                }
+            } catch (err) {
+                alert('Failed to disable user');
+            }
+        }
+
+        async function enableUser(id) {
+            try {
+                const res = await fetch(`${API}/admin/enable`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id })
+                });
+                
+                if (res.ok) {
+                    loadAllUsers();
+                    loadDashboard();
+                } else {
+                    alert('Failed to enable user');
+                }
+            } catch (err) {
+                alert('Failed to enable user');
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Permanently delete this user?')) return;
+            try {
+                const res = await fetch(`${API}/admin/user?id=${id}`, { 
+                    method: 'DELETE' 
+                });
+                
+                if (res.ok) {
+                    loadAllUsers();
+                    loadDashboard();
+                } else {
+                    alert('Failed to delete user');
+                }
+            } catch (err) {
+                alert('Failed to delete user');
+            }
+        }
+
+        function refreshData() {
+            loadDashboard();
+            loadPending();
+            loadAllUsers();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        window.history.pushState(null, "", window.location.href);
+        window.onpopstate = function () {
+            window.history.pushState(null, "", window.location.href);
+        };
+    </script>
 </body>
 </html>

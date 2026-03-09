@@ -1,0 +1,7 @@
+Alluvial_Soil
+Black_Soil
+Clay_Soil
+Laterite_Soil
+Red_Soil
+Yellow_Soil
+

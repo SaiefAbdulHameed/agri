@@ -1,11 +1,11 @@
 #include <stdio.h>
+#include <string.h>
 #include "../include/api.h"
 #include "../include/soil_data.h"
-#include "../include/ml_integration.h"
+
 #include "../include/fertilizer.h"
 #include "../include/utils.h"
 
-// You need to pass the Trie root and fertilizer hash map
 void handle_request(SoilRequest* request, TrieNode* soilRoot, FertilizerNode* fertMap[]) {
     if (!request || !soilRoot || !fertMap) {
         log_error("Invalid parameters to handle_request.");
@@ -19,12 +19,32 @@ void handle_request(SoilRequest* request, TrieNode* soilRoot, FertilizerNode* fe
     }
 
     // Prepare ML input
-    MLInput mlInput;
-    mlInput.soil = soil;
-    str_copy(mlInput.location, request->location, sizeof(mlInput.location));
+    MLInput mlInput = {0};
+    mlInput.pH = soil->pH;
+    mlInput.nitrogen = soil->nitrogen;
+    mlInput.phosphorus = soil->phosphorus;
+    mlInput.potassium = soil->potassium;
+    mlInput.moisture = soil->moisture;
+    strcpy(mlInput.imagePath, ""); // optional
+
+printf("[ML DEBUG] Sending to ML: pH=%.2f N=%d P=%d K=%d Moisture=%d\n",
+       mlInput.pH,
+       mlInput.nitrogen,
+       mlInput.phosphorus,
+       mlInput.potassium,
+       mlInput.moisture);
+
 
     // Get ML prediction
-    MLOutput mlOutput = get_crop_prediction(&mlInput);
+    MLOutput mlOutput = {0};
+    if (get_crop_prediction(&mlInput, &mlOutput) != 0) {
+        log_error("ML prediction failed");
+        strcpy(mlOutput.recommendedCrops, "Fallback: Wheat, Maize, Rice");
+        strcpy(mlOutput.predictedSoil, "Unknown");
+    }
+
+    printf("[ML DEBUG] ML Response: Soil=%s, Crops=%s\n",
+           mlOutput.predictedSoil, mlOutput.recommendedCrops);
 
     // Get fertilizer price
     float ureaPrice = get_fertilizer_price(fertMap, "Urea");
@@ -34,7 +54,8 @@ void handle_request(SoilRequest* request, TrieNode* soilRoot, FertilizerNode* fe
 
     // Print results
     printf("Location: %s\n", request->location);
-    printf("Predicted Crop: %s\n", mlOutput.predictedCrop);
+    printf("Predicted Soil: %s\n", mlOutput.predictedSoil);
+    printf("Recommended Crops: %s\n", mlOutput.recommendedCrops);
     if (ureaPrice >= 0)
         printf("Urea Price: %.2f\n", ureaPrice);
 }
