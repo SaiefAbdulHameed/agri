@@ -1,0 +1,100 @@
+4.x Table Name: Users
+Description: This table is used to store details of users.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+id | INTEGER | N/A | Primary Key | Id
+fullname | TEXT | N/A | Not Null | Fullname
+email | TEXT | N/A | Not Null | Email
+phone | TEXT | N/A | Default('') | Phone
+state | TEXT | N/A | Default('') | State
+district | TEXT | N/A | Default('') | District
+village | TEXT | N/A | Default('') | Village
+land_size | INTEGER | N/A | Default(0) | Land Size
+experience | TEXT | N/A | Default('') | Experience
+role | TEXT | N/A | Default('farmer') | Role
+status | TEXT | N/A | Default('pending') | Status
+password | TEXT | N/A | Not Null | Password
+approved_by | INTEGER | N/A | None | Approved By
+created_at | DATETIME | N/A | Default(CURRENT_TIMESTAMP) | Created At
+approved_at | TIMESTAMP | N/A | None | Approved At
+farmer_id | TEXT | N/A | None | Farmer Id
+employee_id | TEXT | N/A | None | Employee Id
+certification | TEXT | N/A | Default('') | Certification
+department | TEXT | N/A | Default('') | Department
+expertise | TEXT | N/A | Default('') | Expertise
+latitude | REAL | N/A | None | Latitude
+longitude | REAL | N/A | None | Longitude
+location_accuracy | REAL | N/A | None | Location Accuracy
+
+
+4.x Table Name: Admin_users
+Description: This table is used to store details of admin_users.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+id | INTEGER | N/A | Primary Key | Id
+email | TEXT | N/A | Not Null | Email
+fullname | TEXT | N/A | None | Fullname
+password_hash | TEXT | N/A | Not Null | Password Hash
+role | INTEGER | N/A | Default(1) | Role
+active | INTEGER | N/A | Default(1) | Active
+created_at | TIMESTAMP | N/A | Default(CURRENT_TIMESTAMP) | Created At
+last_login | TIMESTAMP | N/A | None | Last Login
+
+
+4.x Table Name: Ml_training_data
+Description: This table is used to store details of ml_training_data.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+id | INTEGER | N/A | Primary Key | Id
+data_type | TEXT | N/A | Not Null | Data Type
+input_data | TEXT | N/A | Not Null | Input Data
+output_data | TEXT | N/A | Not Null | Output Data
+source | TEXT | N/A | None | Source
+verified | INTEGER | N/A | Default(0) | Verified
+processed | INTEGER | N/A | Default(0) | Processed
+created_by | INTEGER | N/A | None | Created By
+accuracy_improvement | REAL | N/A | None | Accuracy Improvement
+created_at | TIMESTAMP | N/A | Default(CURRENT_TIMESTAMP) | Created At
+processed_at | TIMESTAMP | N/A | None | Processed At
+
+
+4.x Table Name: Admin_activity_logs
+Description: This table is used to store details of admin_activity_logs.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+id | INTEGER | N/A | Primary Key | Id
+admin_id | INTEGER | N/A | None | Admin Id
+action | TEXT | N/A | None | Action
+details | TEXT | N/A | None | Details
+ip_address | TEXT | N/A | None | Ip Address
+timestamp | TIMESTAMP | N/A | Default(CURRENT_TIMESTAMP) | Timestamp
+
+
+4.x Table Name: Soil_analysis_logs
+Description: This table is used to store details of soil_analysis_logs.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+id | INTEGER | N/A | Primary Key | Id
+user_id | INTEGER | N/A | None | User Id
+input_data | TEXT | N/A | None | Input Data
+prediction_result | TEXT | N/A | None | Prediction Result
+recommendation | TEXT | N/A | None | Recommendation
+created_at | TIMESTAMP | N/A | Default(CURRENT_TIMESTAMP) | Created At
+verified | INTEGER | N/A | Default(0) | Verified
+verified_by | INTEGER | N/A | None | Verified By
+
+
+4.x Table Name: System_settings
+Description: This table is used to store details of system_settings.
+
+Column Name | Data Type | Size | Constraints | Description
+------------------------------------------------------------------------------------------
+key | TEXT | N/A | Primary Key | Key
+value | TEXT | N/A | None | Value
+updated_at | TIMESTAMP | N/A | Default(CURRENT_TIMESTAMP) | Updated At
+

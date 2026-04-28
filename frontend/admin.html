@@ -89,16 +89,44 @@
             margin-bottom: 6px;
         }
 
-        .form-group input {
+        .form-group input, .form-group select {
             width: 100%;
             padding: 12px 16px;
             border: 2px solid var(--gray-200);
             border-radius: 8px;
             font-size: 15px;
             transition: all 0.2s;
+            font-family: inherit;
         }
 
-        .form-group input:focus {
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-700);
+        }
+
+        .input-group input, .input-group select {
+            padding: 10px 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px var(--primary-light);
@@ -592,6 +620,59 @@
         .hidden {
             display: none !important;
         }
+
+        .ml-result-box {
+            margin-top: 20px;
+            padding: 16px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .ml-result-box.error {
+            background: #fee2e2;
+            border-left-color: var(--danger);
+        }
+
+        .ml-result-box.warning {
+            background: #fef3c7;
+            border-left-color: var(--warning);
+        }
+
+        .ml-status-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .ml-status-card {
+            padding: 16px;
+            background: #f9fafb;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .ml-status-card h4 {
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 14px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-dot.online { background: #10b981; }
+        .status-dot.offline { background: #ef4444; }
     </style>
 </head>
 <body>
@@ -691,10 +772,7 @@
                     <i class="fas fa-brain"></i>
                     <span>Teach ML</span>
                 </div>
-                <div class="nav-item" onclick="showSection('settings', this)">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </div>
+                
             </nav>
 
             <div class="sidebar-footer">
@@ -723,9 +801,7 @@
                     <button class="btn-icon" onclick="refreshData()">
                         <i class="fas fa-sync-alt"></i>
                     </button>
-                    <button class="btn-icon">
-                        <i class="fas fa-bell"></i>
-                    </button>
+                  
                 </div>
             </header>
 
@@ -876,9 +952,96 @@
                     <div class="card">
                         <div class="card-header">
                             <h3 class="card-title">Add Training Data (Crop Recommendation)</h3>
+                            <button class="btn btn-secondary btn-sm" onclick="loadMLStatus()">
+                                <i class="fas fa-sync-alt"></i> Refresh Status
+                            </button>
                         </div>
                         <div class="card-body">
-                            <p>ML Training form content here...</p>
+                            <form id="mlTrainingForm" onsubmit="submitTrainingData(event)">
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;">
+                                    <div class="input-group">
+                                        <label>Nitrogen (N) mg/kg</label>
+                                        <input type="number" id="ml-n" step="0.1" required placeholder="e.g., 90">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Phosphorus (P) mg/kg</label>
+                                        <input type="number" id="ml-p" step="0.1" required placeholder="e.g., 42">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Potassium (K) mg/kg</label>
+                                        <input type="number" id="ml-k" step="0.1" required placeholder="e.g., 43">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>pH Level</label>
+                                        <input type="number" id="ml-ph" step="0.1" min="0" max="14" required placeholder="6.5">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Moisture %</label>
+                                        <input type="number" id="ml-moisture" step="0.1" required placeholder="e.g., 23">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Temperature (°C)</label>
+                                        <input type="number" id="ml-temp" step="0.1" required placeholder="e.g., 25">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Rainfall (mm)</label>
+                                        <input type="number" id="ml-rain" step="0.1" required placeholder="e.g., 200">
+                                    </div>
+                                    <div class="input-group">
+                                        <label>Expected Crop *</label>
+                                        <select id="ml-crop" required>
+                                            <option value="">Select crop...</option>
+                                            <option value="rice">Rice</option>
+                                            <option value="wheat">Wheat</option>
+                                            <option value="maize">Maize</option>
+                                            <option value="cotton">Cotton</option>
+                                            <option value="sugarcane">Sugarcane</option>
+                                            <option value="groundnut">Groundnut</option>
+                                            <option value="turmeric">Turmeric</option>
+                                            <option value="chickpea">Chickpea</option>
+                                            <option value="mungbean">Mung Bean</option>
+                                            <option value="lentil">Lentil</option>
+                                            <option value="pomegranate">Pomegranate</option>
+                                            <option value="banana">Banana</option>
+                                            <option value="mango">Mango</option>
+                                            <option value="grapes">Grapes</option>
+                                            <option value="watermelon">Watermelon</option>
+                                            <option value="muskmelon">Muskmelon</option>
+                                            <option value="apple">Apple</option>
+                                            <option value="orange">Orange</option>
+                                            <option value="papaya">Papaya</option>
+                                            <option value="coconut">Coconut</option>
+                                            <option value="coffee">Coffee</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div style="display: flex; gap: 12px; align-items: center;">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-plus"></i> Add Training Sample
+                                    </button>
+                                    <button type="button" class="btn btn-primary" onclick="triggerRetrain()">
+                                        <i class="fas fa-robot"></i> Force Retrain Now
+                                    </button>
+                                    <span id="mlStatusMsg" style="color: var(--gray-500); font-size: 14px;"></span>
+                                </div>
+                            </form>
+                            
+                            <div id="mlResult" class="ml-result-box hidden">
+                                <h4 style="color: #065f46; margin-bottom: 8px;"><i class="fas fa-check-circle"></i> Result</h4>
+                                <pre id="mlResultJson" style="background: white; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 12px; max-height: 200px; overflow-y: auto;"></pre>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">ML System Status</h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="mlSystemStatus" style="color: var(--gray-500);">
+                                <p><i class="fas fa-spinner fa-spin"></i> Loading ML status...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -982,17 +1145,21 @@
             const targetSection = document.getElementById(section + 'Section');
             if (targetSection) targetSection.classList.remove('hidden');
             
-            const titles = {
+         const titles = {
                 dashboard: ['Dashboard', 'Platform overview and analytics'],
                 pending: ['Pending Approvals', 'Review and approve new user registrations'],
                 users: ['User Management', 'Manage all registered users'],
-                ml: ['Teach ML', 'Add training data to improve AI models'],
-                settings: ['Settings', 'System configuration']
+                ml: ['Teach ML', 'Add training data to improve AI models']
             };
             
             const [title, subtitle] = titles[section] || ['Dashboard', ''];
             document.getElementById('pageTitle').textContent = title;
             document.getElementById('pageSubtitle').textContent = subtitle;
+
+            // Load ML status when showing ML section
+            if (section === 'ml') {
+                loadMLStatus();
+            }
         }
 
         async function loadDashboard() {
@@ -1309,10 +1476,233 @@
             }
         }
 
+        // ML Training Functions
+        async function submitTrainingData(event) {
+            event.preventDefault();
+            
+            const payload = {
+                n: parseFloat(document.getElementById('ml-n').value),
+                p: parseFloat(document.getElementById('ml-p').value),
+                k: parseFloat(document.getElementById('ml-k').value),
+                ph: parseFloat(document.getElementById('ml-ph').value),
+                moisture: parseFloat(document.getElementById('ml-moisture').value),
+                temp: parseFloat(document.getElementById('ml-temp').value),
+                rain: parseFloat(document.getElementById('ml-rain').value),
+                expected_crop: document.getElementById('ml-crop').value
+            };
+            
+            const statusMsg = document.getElementById('mlStatusMsg');
+            const resultBox = document.getElementById('mlResult');
+            
+            statusMsg.textContent = 'Saving to database...';
+            statusMsg.style.color = 'var(--gray-500)';
+            resultBox.classList.add('hidden');
+            
+            try {
+                // Step 1: Save to C backend database
+                const dbRes = await fetch(`${API}/admin/ml-train`, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                        'X-Admin-Email': currentAdmin?.email || 'admin@agrismart.com'
+                    },
+                    body: JSON.stringify({
+                        type: 'crop',
+                        input: JSON.stringify({
+                            nitrogen: payload.n,
+                            phosphorus: payload.p,
+                            potassium: payload.k,
+                            ph: payload.ph,
+                            moisture: payload.moisture,
+                            temperature: payload.temp,
+                            rainfall: payload.rain
+                        }),
+                        output: JSON.stringify({ result: payload.expected_crop }),
+                        source: 'admin_manual'
+                    })
+                });
+                
+                if (!dbRes.ok) throw new Error('Failed to save to database');
+                
+                // Step 2: Send to Python ML server for immediate learning
+                statusMsg.textContent = 'Training ML model...';
+                
+                const mlRes = await fetch('http://localhost:5000/admin/ml/learn', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                const mlData = await mlRes.json();
+                
+                // Show result
+                resultBox.classList.remove('hidden');
+                document.getElementById('mlResultJson').textContent = JSON.stringify(mlData, null, 2);
+                
+                if (mlData.success) {
+                    statusMsg.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Training complete!';
+                    statusMsg.style.color = '#10b981';
+                    resultBox.classList.remove('error', 'warning');
+                } else {
+                    statusMsg.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i> Warning: ' + (mlData.error || 'Partial success');
+                    statusMsg.style.color = '#f59e0b';
+                    resultBox.classList.add('warning');
+                }
+                
+                // Refresh stats
+                loadMLStatus();
+                
+                // Clear form
+                document.getElementById('mlTrainingForm').reset();
+                
+            } catch (err) {
+                console.error(err);
+                statusMsg.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Error: ' + err.message;
+                statusMsg.style.color = '#ef4444';
+                resultBox.classList.remove('hidden', 'warning');
+                resultBox.classList.add('error');
+                document.getElementById('mlResultJson').textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function triggerRetrain() {
+            const statusMsg = document.getElementById('mlStatusMsg');
+            const resultBox = document.getElementById('mlResult');
+            
+            statusMsg.textContent = 'Force retraining...';
+            statusMsg.style.color = 'var(--gray-500)';
+            resultBox.classList.add('hidden');
+            
+            try {
+                const res = await fetch('http://localhost:5000/admin/ml/trigger-retrain', {
+                    method: 'POST'
+                });
+                
+                const data = await res.json();
+                
+                resultBox.classList.remove('hidden');
+                document.getElementById('mlResultJson').textContent = JSON.stringify(data, null, 2);
+                
+                if (data.trained) {
+                    statusMsg.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i> Model retrained!';
+                    statusMsg.style.color = '#10b981';
+                    resultBox.classList.remove('error', 'warning');
+                } else {
+                    statusMsg.innerHTML = '<i class="fas fa-info-circle" style="color: #f59e0b;"></i> No new data to train';
+                    statusMsg.style.color = '#f59e0b';
+                    resultBox.classList.add('warning');
+                }
+                
+                loadMLStatus();
+                
+            } catch (err) {
+                statusMsg.innerHTML = '<i class="fas fa-times-circle" style="color: #ef4444;"></i> Error: ' + err.message;
+                statusMsg.style.color = '#ef4444';
+                resultBox.classList.remove('hidden', 'warning');
+                resultBox.classList.add('error');
+                document.getElementById('mlResultJson').textContent = 'Error: ' + err.message;
+            }
+        }
+
+        async function loadMLStatus() {
+            const statusDiv = document.getElementById('mlSystemStatus');
+            
+            try {
+                const res = await fetch('http://localhost:5000/admin/ml/status');
+                const data = await res.json();
+                
+                // Update stats cards
+                if (data.training_stats) {
+                    document.getElementById('mlPending').textContent = 
+                        (data.training_stats.crop || 0) + 
+                        (data.training_stats.soil || 0) + 
+                        (data.training_stats.disease || 0);
+                    document.getElementById('mlProcessed').textContent = 
+                        data.training_stats.total_processed || 0;
+                    document.getElementById('mlBuffer').textContent = 
+                        data.learner?.buffer_size || 0;
+                }
+                
+                // Build detailed status HTML
+                const models = data.models || {};
+                const learner = data.learner || {};
+                const stats = data.training_stats || {};
+                
+                const statusHtml = `
+                    <div class="ml-status-grid">
+                        <div class="ml-status-card">
+                            <h4><i class="fas fa-brain" style="color: #3b82f6;"></i> ML Models</h4>
+                            <div style="font-size: 13px; color: #6b7280; line-height: 1.8;">
+                                <div class="status-indicator">
+                                    <span class="status-dot ${models.soil?.loaded ? 'online' : 'offline'}"></span>
+                                    Soil: ${models.soil?.loaded ? 'Ready' : 'Offline'} (${models.soil?.classes || 0} classes)
+                                </div>
+                                <div class="status-indicator">
+                                    <span class="status-dot ${models.plant?.loaded ? 'online' : 'offline'}"></span>
+                                    Plant: ${models.plant?.loaded ? 'Ready' : 'Offline'} (${models.plant?.classes || 0} classes)
+                                </div>
+                                <div class="status-indicator">
+                                    <span class="status-dot ${models.crop?.loaded ? 'online' : 'offline'}"></span>
+                                    Crop: ${models.crop?.loaded ? (models.crop?.live ? 'Live Learning' : 'Ready') : 'Offline'} 
+                                    (${models.crop?.classes || 0} classes)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ml-status-card">
+                            <h4><i class="fas fa-database" style="color: #10b981;"></i> Training Queue</h4>
+                            <div style="font-size: 24px; font-weight: 700; color: #3b82f6; margin: 8px 0;">
+                                ${stats.crop || 0}
+                            </div>
+                            <p style="font-size: 12px; color: #6b7280;">Crop samples pending</p>
+                            <div style="margin-top: 12px; font-size: 12px; color: #6b7280;">
+                                <div>Soil: ${stats.soil || 0} pending</div>
+                                <div>Disease: ${stats.disease || 0} pending</div>
+                                <div>Total processed: ${stats.total_processed || 0}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="ml-status-card">
+                            <h4><i class="fas fa-robot" style="color: #f59e0b;"></i> Live Learner</h4>
+                            <div style="font-size: 14px; color: #6b7280; line-height: 1.6;">
+                                <div>Status: ${learner.initialized ? '<span style="color: #10b981;">Active</span>' : '<span style="color: #ef4444;">Not Ready</span>'}</div>
+                                <div>Buffer: <strong>${learner.buffer_size || 0}/${learner.threshold || 10}</strong></div>
+                                <div>Total samples: <strong>${learner.total_samples || 0}</strong></div>
+                                <div style="margin-top: 8px; font-size: 11px; color: #9ca3af;">
+                                    Auto-retrain when buffer full
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                statusDiv.innerHTML = statusHtml;
+                
+            } catch (err) {
+                statusDiv.innerHTML = `
+                    <div style="padding: 20px; background: #fee2e2; border-radius: 8px; text-align: center;">
+                        <i class="fas fa-exclamation-triangle" style="color: #ef4444; font-size: 24px; margin-bottom: 8px;"></i>
+                        <p style="color: #991b1b; font-weight: 500;">ML Server Unreachable</p>
+                        <p style="color: #b91c1c; font-size: 13px;">Make sure Python ML server is running on port 5000</p>
+                    </div>
+                `;
+                
+                // Reset stats to 0
+                document.getElementById('mlPending').textContent = '0';
+                document.getElementById('mlProcessed').textContent = '0';
+                document.getElementById('mlBuffer').textContent = '0';
+            }
+        }
+
         function refreshData() {
             loadDashboard();
             loadPending();
             loadAllUsers();
+            // Also refresh ML status if on ML section
+            const mlSection = document.getElementById('mlSection');
+            if (mlSection && !mlSection.classList.contains('hidden')) {
+                loadMLStatus();
+            }
         }
 
         function escapeHtml(text) {
